@@ -1,9 +1,11 @@
 import pickle
 
 import keras.backend as K
+import matplotlib.pyplot
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+import matplotlib.pyplot as plt
 
 from constants import Constants
 
@@ -38,10 +40,10 @@ model.compile(
     optimizer=keras.optimizers.SGD(1e-3),
     loss= [keras.losses.MeanSquaredError(),keras.losses.MeanSquaredError(), keras.losses.MeanSquaredError()]
 )
-model.fit(
+history=model.fit(
     [ex,hx_x, hy_x],[ey,hx_y,hy_y],
     epochs=2,
-    batch_size=32
+    batch_size=32, validation_split=0.2
 )
 print(model.trainable_weights)
 
@@ -51,53 +53,5 @@ non_trainable_count = np.sum([K.count_params(w) for w in model.non_trainable_wei
 print('Total params: {:,}'.format(trainable_count + non_trainable_count))
 print('Trainable params: {:,}'.format(trainable_count))
 print('Non-trainable params: {:,}'.format(non_trainable_count))
-# class Network(keras.Model):
 #
-#     def __init__(self,w):
-#         super(Network, self).__init__()
-#         self.block1=utils.MAIN_LAYER(w)
-#     def __call__(self, E,Hx,Hy):
-#         return self.block1(E,Hx,Hy)
-#
-# model=Network(1.)
-
-#keras.utils.plot_model(model, "multi_input_and_output_model.png", show_shapes=True)
-#block1=Network(1.)
-#block1(ex,hx_x,hy_x)
-
-from  utils import *
-
-
-
-
-# def build_model():
-#     model = tf.keras.models.Sequential([
-#         tf.keras.layers.Flatten(input_shape=(40,40)),
-#         tf.keras.layers.Dense(128, activation='relu'),
-#         tf.keras.layers.Dense(5)
-#     ])
-#     model.compile(
-#         optimizer=tf.keras.optimizers.Adam(0.001),
-#         loss=tf.keras.losses.MeanSquaredError(),
-#         metrics=tf.keras.metrics.MeanSquaredError(),
-#     )
-#     return model
-#
-#
-# def train_model(model, x_train,y_train):
-#     model.fit(
-#         x_train,
-#         y_train,
-#         batch_size=10,
-#         epochs=3
-        # validation_data=(x_val, y_val),
-    # )
-
-
-#if __name__ == "__main__":
-   # model = build_model()
-    #train_model(model, np.random.rand(100,40,40),np.random.rand(100,5))
-
-
-
-
+print(history.history)

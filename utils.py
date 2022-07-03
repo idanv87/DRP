@@ -66,8 +66,6 @@ class MAIN_LAYER(keras.layers.Layer):
         Hx_n, Hy_n = self.faraday(E_n, Hx, Hy)
         E_m = self.amper(E_n, Hx_n, Hy_n)
         Hx_m, Hy_m = self.faraday(E_m, Hx_n, Hy_n)
-        print(Hx_m.shape)
-        print(tf.concat([Hx_n,Hx_m],1).shape)
         return tf.concat([E_n,E_m],1), tf.concat([Hx_n,Hx_m],1), tf.concat([Hy_n,Hy_m],1)
 
 
