@@ -27,7 +27,7 @@ with open('files/hx_y.pkl', 'rb') as file:
     hx_y =tf.cast(pickle.load(file),tf.dtypes.float32)
 with open('files/hy_y.pkl', 'rb') as file:
     hy_y = tf.cast(pickle.load(file),tf.dtypes.float32)
-w=tf.Variable([3.,2.],trainable=True, dtype=tf.dtypes.float32, name='w')
+w=tf.Variable(1.,trainable=True, dtype=tf.dtypes.float32, name='w')
 E_input = keras.Input(shape=(Constants.N,Constants.N,1), name="E")
 Hx_input = keras.Input(shape=(Constants.N-2,Constants.N-1,1), name="Hx")
 Hy_input = keras.Input(shape=(Constants.N-1,Constants.N-2,1), name="Hy")

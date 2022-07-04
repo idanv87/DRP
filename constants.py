@@ -37,11 +37,10 @@ class Constants:
     PADY_FORWARD = tf.constant([[0, 0], [1, N-2], [1, 1], [0, 0]], shape=[4, 2])
     PADY_BACWARD = tf.constant([[0, 0], [N-2, 1], [1, 1], [0, 0]], shape=[4, 2])
 
-    A = np.array([1., 2., 3., 4., 5.]).reshape(1, 5)
+    A = np.array([-23/24, 7/8, 1/8, -1/24, 0.]).reshape(1, 5)
     B = np.zeros((1, N-5-1))
-    KERNEL_FORWARD = tf.cast(np.append(A, B).reshape(1, N-1, 1, 1),tf.dtypes.float32)
-    KERNEL_BACKWARD = tf.cast(np.append(A, B).reshape(1, N-1, 1, 1),tf.dtypes.float32)
-
+    KERNEL_FORWARD = (1/DX)*tf.cast(np.append(A, B).reshape(1, N-1, 1, 1),tf.dtypes.float32)
+    KERNEL_BACKWARD = -tf.reverse(KERNEL_FORWARD,[1])
     PADEX_FORWARD=tf.constant([[0, 0], [0, 0], [0, N-2], [0, 0]], shape=[4, 2])
     PADEX_BACKWARD=tf.constant([[0, 0], [0, 0], [N-2, 0], [0, 0]], shape=[4, 2])
     PADEY_FORWARD = tf.constant([[0, 0], [0, N-2], [0, 0], [0, 0]], shape=[4, 2])
@@ -52,4 +51,5 @@ class Constants:
     KERNEL_E_FORWARD = tf.cast(np.append(C, D).reshape(1, N, 1, 1),tf.dtypes.float32)
     KERNEL_E_BACKWARD = tf.cast(np.append(C, D).reshape(1, N, 1, 1),tf.dtypes.float32)
 
-
+    FILTER1=tf.constant([[0.,0.,0.,0.],[1/3,-1,1,-1/3],[0.,0.,0.,0.]],shape=[3,4,1,1])
+    FILTER2 = tf.constant([[0., 0., 0., 0.], [-1 / (3*DX), -1, 1, 1 / (3*DX)], [0., 0., 0., 0.]], shape=[3, 4, 1, 1])

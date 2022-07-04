@@ -10,13 +10,11 @@ class MAIN_LAYER(keras.layers.Layer):
 #d
     def __init__(self,w):
         super(MAIN_LAYER,self).__init__()
-        # self.a=tf.Variable([1.])
-        # self.b=tf.constant([2.])
-        # self.c=tf.reshape(tf.concat([self.a, self.b],0),[1,2,1,1])
-        # print(self.c)
-        #self.w=w
-        self.filter = tf.Variable(
-           tf.constant([[1., -1., 1., 0], [0, -1., 1., 0], [1., -1., 1., 0]], shape=[3, 4, 1, 1]),trainable=True)
+        self.par=w
+
+
+
+
         self.pad1=tf.constant([[0, 0], [2, 2], [2, 2], [0,0]], shape=[4, 2])
         self.pad2=tf.constant([[0, 0], [0, 0], [1, 1], [0, 0]], shape=[4, 2])
         self.pad3=tf.constant([[0, 0], [1, 1], [0, 0], [0, 0]], shape=[4, 2])
@@ -24,28 +22,28 @@ class MAIN_LAYER(keras.layers.Layer):
 
 
     def amper(self, E, Hx, Hy):
-        S1 = tf.pad(( Constants.DT / Constants.DX) * self.Dx(Hy,tf.transpose(self.filter, perm=[1, 0, 2, 3])), self.pad1)+ \
+        S1 = tf.pad( self.par*self.Dx(Hy,tf.transpose(Constants.FILTER1, perm=[1, 0, 2, 3]))+self.Dx(Hy,tf.transpose(Constants.FILTER2, perm=[1, 0, 2, 3])), self.pad1)+ \
         tf.pad(self.Dx(Hy,tf.transpose(Constants.KERNEL_FORWARD, perm=[1, 0, 2, 3])),Constants.PADY_FORWARD)+ \
         tf.pad(self.Dx(Hy, tf.transpose(Constants.KERNEL_BACKWARD, perm=[1, 0, 2, 3])), Constants.PADY_BACWARD)
 
-        S2 = tf.pad((Constants.Z * Constants.DT / Constants.DY) * self.Dy(Hx,self.filter), self.pad1)+ \
+        S2 = tf.pad( self.par*self.Dy(Hx,Constants.FILTER1)+self.Dy(Hx,Constants.FILTER2), self.pad1)+ \
         tf.pad(self.Dy(Hx, Constants.KERNEL_FORWARD), Constants.PADX_FORWARD)+ \
         tf.pad(self.Dy(Hx, Constants.KERNEL_BACKWARD), Constants.PADX_BACWARD)
-        return (E + S1 - S2)
+        return (E + Constants.DT*(S1 - S2))
 
     def faraday(self, E, Hx, Hy):
 
 
-        S3 = (Constants.DT / (Constants.Z * Constants.DY))*tf.pad(self.Dy(E,self.filter), self.pad2)+ \
+        S3 = tf.pad(self.par*self.Dy(E,Constants.FILTER1)+self.Dy(E,Constants.FILTER2), self.pad2)+ \
         tf.pad(self.Dy(E, Constants.KERNEL_E_FORWARD), Constants.PADEX_FORWARD)[:,1:-1,:,:] + \
         tf.pad(self.Dy(E, Constants.KERNEL_E_BACKWARD), Constants.PADEX_BACKWARD)[:,1:-1,:,:]
 
-        S4 = (Constants.DT / (Constants.Z * Constants.DX))*tf.pad(self.Dx(E,tf.transpose(self.filter, perm=[1, 0, 2, 3])), self.pad3)+ \
+        S4 = tf.pad(self.par*self.Dx(E,tf.transpose(Constants.FILTER1, perm=[1, 0, 2, 3]))+self.Dx(E,tf.transpose(Constants.FILTER2, perm=[1, 0, 2, 3])), self.pad3)+ \
         tf.pad(self.Dx(E, tf.transpose(Constants.KERNEL_E_FORWARD, perm=[1, 0, 2, 3])), Constants.PADEY_FORWARD)[:,:,1:-1,:]  + \
         tf.pad(self.Dx(E, tf.transpose(Constants.KERNEL_E_BACKWARD, perm=[1, 0, 2, 3])), Constants.PADEY_BACKWARD)[:,:,1:-1,:]
 
-        Ax = (Hx - S3)
-        Ay = (Hy + S4)
+        Ax = (Hx - Constants.DT*S3)
+        Ay = (Hy + Constants.DT*S4)
 
         return Ax, Ay
 
